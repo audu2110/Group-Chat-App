@@ -28,22 +28,41 @@ function onSubmit(e){
 }
 
 
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
 window.addEventListener("DOMContentLoaded", () =>{
     const token  = localStorage.getItem('token')
+    const decodeToken = parseJwt(token)
+    console.log("decode tokenjhhvhjshshbshb",decodeToken.userId)
+    const uid=decodeToken.userId;
     showAlltheUsers()
-    axios.get("http://localhost:5000/message/getmessages", { headers: {"Authorization" : token} })
+    setInterval(axios.get("http://localhost:5000/message/getmessages", { headers: {"Authorization" : token} })
     .then((response)=>{
       console.log("all the data",response.data);
-      console.log("all the data in database",response.data.allMessages.length);
-      console.log("all the data in database",response.data.allMessages[0].Username);
+      // console.log("all the data in database",response.data.allMessages.length);
+      // console.log("all the data in database",response.data.allMessages[0].Username);
       
       for(var i=0;i<response.data.allMessages.length;i++){
-        showNewUserOnScreen(response.data.allMessages[i],'outgoing');
+        if(uid==response.data.allMessages[i].userId){
+          showNewUserOnScreen(response.data.allMessages[i],'outgoing');
+        }
+        else{
+          showNewUserOnScreen(response.data.allMessages[i],'incoming');
+        }
+        
       }
     })
     .catch((err)=>{
       console.log(err);
-    })
+    }), 1000)
+    
+    
   
   })
   
@@ -76,7 +95,7 @@ window.addEventListener("DOMContentLoaded", () =>{
     const token  = localStorage.getItem('token')
     axios.get("http://localhost:5000/message/getusers", { headers: {"Authorization" : token} })
     .then((response)=>{
-      console.log("all the users",response.data.allUsers[0].name)
+      // console.log("all the users",response.data.allUsers[0].name)
       console.log(response.data.allUsers.length);
       // console.log("all the data in database",response.data.allMessages.length);
       // console.log("all the data in database",response.data.allMessages[0].Username);
