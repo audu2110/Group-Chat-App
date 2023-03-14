@@ -4,7 +4,7 @@ const express = require('express');
 const Sib = require('sib-api-v3-sdk')
 
 const router = express.Router();
-// const userAuth=require('../middleware/auth');
+const userAuth=require('../middleware/auth');
 const uuid = require('uuid');
 const bcrypt = require('bcrypt');
 require('dotenv').config()

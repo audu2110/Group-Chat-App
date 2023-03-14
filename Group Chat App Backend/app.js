@@ -9,9 +9,11 @@ const sequelize = require('./util/database');
 // const helmet=require('helmet')
 // const compression = require('compression')
 // const morgan = require('morgan')
-// const Expense = require('./models/expense');
 const User = require('./models/user');
-// const Order = require('./models/orders');
+const Group = require('./models/group');
+const Message = require('./models/message');
+const Usergroup = require('./models/usergroup');
+
 const Forgotpassword =require('./models/forgotpassword');
 app.use(cors());
 
@@ -21,9 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-// const adminRoutes = require('./routes/admin');
-// app.use('/admin', adminRoutes);
-
+const msgRoutes = require('./routes/message');
+app.use('/message', msgRoutes);
 // app.use(helmet());
 // app.use(compression());
 // app.use(morgan('combined'));
@@ -45,14 +46,15 @@ app.use((req, res, next) => {
 
 
 
-// User.hasMany(Expense);
-// Expense.belongsTo(User);
 
-// User.hasMany(Order);
-// Order.belongsTo(User);
+User.hasMany(Message)
+Message.belongsTo(User)
 
-User.hasMany(Forgotpassword);
-Forgotpassword.belongsTo(User);
+Group.belongsToMany(User,{through:Usergroup})
+User.belongsToMany(Group,{through:Usergroup})
+
+Group.hasMany(Message)
+Message.belongsTo(Group)
 
 sequelize.sync()
 .then(result=>{

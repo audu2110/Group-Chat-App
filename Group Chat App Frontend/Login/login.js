@@ -12,7 +12,7 @@ function login(e) {
             alert(response.data.message)
             console.log(response.data)
             localStorage.setItem('token', response.data.token)
-            window.location.href = "../expense/index.html"
+            window.location.href = "../chat/index.html"
     }).catch(err => {
         console.log(JSON.stringify(err))
         alert("Email Does Not Exist")
