@@ -3,29 +3,13 @@ const messageInput=document.querySelector('#message');
 const msg_send=document.querySelector('#user-send')
 const chats=document.querySelector('.chats')
 const users_list=document.querySelector('.users-list')
+const groups_list=document.querySelector('.groups-list')
 const users_count=document.querySelector('.users-count')
-myForm.addEventListener('submit', onSubmit);
-
-function onSubmit(e){
-    e.preventDefault();
-    var message=messageInput.value
-
-    let obj={
-        message
-    };
-    console.log(message);
-    console.log(obj);
-    const token  = localStorage.getItem('token')
-    axios.post("http://localhost:5000/message/sendmsg",obj,  { headers: {"Authorization" : token} })
-    .then((response)=>{
-      console.log(response)
-      showNewUserOnScreen(response.data.newUserDetail)  
-    })
-    .catch((err)=>{
-      document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
-      console.log(err);
-    })
-}
+const grp_usr_add_name=document.querySelector('#grpusrname')
+const creategroup=document.querySelector('#creatgrp')
+const grpname=document.querySelector('#groupname')
+const grp_add_groupName=document.querySelector('#groupName')
+const user_group_list=document.querySelector('#users-group-list')
 
 
 const parseJwt = (token) => {
@@ -36,90 +20,69 @@ const parseJwt = (token) => {
   }
 };
 
-window.addEventListener("DOMContentLoaded", () =>{
-    // const token  = localStorage.getItem('token')
-    // const decodeToken = parseJwt(token)
-    // console.log("decode tokenjhhvhjshshbshb",decodeToken.userId)
-    // const uid=decodeToken.userId;
-    // showAlltheUsers()
-    // setInterval(axios.get("http://localhost:5000/message/getmessages", { headers: {"Authorization" : token} })
-    // .then((response)=>{
-    //   console.log("all the data",response.data);
-    //   // console.log("all the data in database",response.data.allMessages.length);
-    //   // console.log("all the data in database",response.data.allMessages[0].Username);
+async function sendmsz(e){
+    e.preventDefault();
+    var message=messageInput.value
+
+    let obj={
+        message
+    };
+    console.log(message);
+    console.log(obj);
+    const groupId = localStorage.getItem("groupid") ? localStorage.getItem("groupid") : 0;
+    console.log("send msg gid",groupId);
+    const token  = localStorage.getItem('token')
+    axios.post(`http://localhost:5000/message/sendmsg/${groupId}`,obj,  { headers: {"Authorization" : token} })
+    .then((response)=>{
+      console.log(response)
+      showNewMessageOnScreen(response.data.newUserDetail)  
+    })
+    .catch((err)=>{
+      document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
+      console.log(err);
+    })
+}
+
+var groupid = localStorage.getItem("groupid") ? localStorage.getItem("groupid") : 0;
+if (groupid <= 0) {
+  window.addEventListener("DOMContentLoaded", getmessage)
+} else {
+    window.addEventListener("DOMContentLoaded", opengroupchat(groupid))
+}
+
+
+
+
+async function getmessage(){
+    const token  = localStorage.getItem('token')
+    const decodeToken = parseJwt(token)
+    console.log("decode tokenjhhvhjshshbshb",decodeToken.userId)
+    const uid=decodeToken.userId;
+    chats.innerHTML=""
+    showAlltheUsers()
+    axios.get("http://localhost:5000/message/getmessages", { headers: {"Authorization" : token} })
+    .then((response)=>{
+      console.log("all the data",response.data);
       
-    //   for(var i=0;i<response.data.allMessages.length;i++){
-    //     if(uid==response.data.allMessages[i].userId){
-    //       showNewUserOnScreen(response.data.allMessages[i],'outgoing');
-    //     }
-    //     else{
-    //       showNewUserOnScreen(response.data.allMessages[i],'incoming');
-    //     }
+      
+      for(var i=0;i<response.data.allMessages.length;i++){
+        if(uid==response.data.allMessages[i].userId){
+          showNewMessageOnScreen(response.data.allMessages[i],'outgoing');
+        }
+        else{
+          showNewMessageOnScreen(response.data.allMessages[i],'incoming');
+        }
         
-    //   }
-    // })
-    // .catch((err)=>{
-    //   console.log(err);
-    // }), 1000)
-    
-    
-    const lsdata = JSON.parse(localStorage.getItem("messages"));
-
-  let lastid;
-  if (lsdata == null) {
-    lastid = 0;
-  } else {
-    lastid = lsdata[lsdata.length - 1].msgid;
+      }
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  
   }
-  let mergemsgs = [];
-  const token  = localStorage.getItem('token')
-  axios
-    .get(`http://localhost:5000/message/getmessages?id=${lastid}`, { headers: {"Authorization" : token} })
-    .then((messages) => {
-      if (messages.data.length > 0) {
-        if (lsdata) {
-          mergemsgs = lsdata.concat(messages.data);
-        } else {
-          mergemsgs = messages.data;
-        }
-        if (mergemsgs.lenght > 1000) {
-          let remove = mergemsgs.length - 1000;
-          for (let i = 0; i < remove; i++) {
-            mergemsgs.shift();
-          }
-        }
-      } else {
-        mergemsgs = JSON.parse(localStorage.getItem("messages"));
-      }
-      localStorage.setItem("messages", JSON.stringify(mergemsgs));
-
-      const msgcontainer = document.getElementById("msgs");
-      msgcontainer.innerHTML = "";
-      msgcontainer.innerHTML = "<h1>Messages:</h1>";
-
-      for (let i = 0; i < mergemsgs.length; i++) {
-        const msgdiv = document.createElement("div");
-        msgdiv.classList.add("msgdiv");
-        const name = document.createElement("div");
-        name.innerHTML = `<p>${mergemsgs[i].Username}:</p>`;
-        msgdiv.appendChild(name);
-        const msg = document.createElement("div");
-        msg.innerHTML = `<p>${mergemsgs[i].message}</p>`;
-        msgdiv.appendChild(msg);
-        msgcontainer.appendChild(msgdiv);
-      }
-    });
-  
-  })
   
   
-  function showNewUserOnScreen(user,status){
-  
-    // document.getElementById('messagge').value='';
-  
-    // if(localStorage.getItem(user.email) !== null){
-    //   removeUserFromScreen(email);
-    // }
+  function showNewMessageOnScreen(user,status){
     let div=document.createElement('div');
     div.classList.add('message',status)
     let content=`<h5> ${user.Username}</h5>
@@ -135,20 +98,14 @@ window.addEventListener("DOMContentLoaded", () =>{
 
 
 
-  function showAlltheUsers(){
+async function showAlltheUsers(){
     users_list.innerHTML=""
     
     const token  = localStorage.getItem('token')
     axios.get("http://localhost:5000/message/getusers", { headers: {"Authorization" : token} })
     .then((response)=>{
-      // console.log("all the users",response.data.allUsers[0].name)
-      console.log(response.data.allUsers.length);
-      // console.log("all the data in database",response.data.allMessages.length);
-      // console.log("all the data in database",response.data.allMessages[0].Username);
       
-      // for(var i=0;i<response.data.allMessages.length;i++){
-      //   showNewUserOnScreen(response.data.allMessages[i],'outgoing');
-      // }
+      console.log(response.data.allUsers.length);
       for(var i=0;i<response.data.allUsers.length;i++){
         let p=document.createElement('p')
         p.innerText=response.data.allUsers[i].name
@@ -163,42 +120,218 @@ window.addEventListener("DOMContentLoaded", () =>{
 
 
 
+function myFunction(){
+  var groupname=grpname.value
+
+    let obj={
+      groupname
+    };
+    console.log(groupname);
+    console.log(obj);
+    const token  = localStorage.getItem('token')
+    axios.post("http://localhost:5000/group/creategroup",obj,  { headers: {"Authorization" : token} })
+    .then((response)=>{
+      console.log("bhbhjbhs nsjkjsh snjkjdddd hsbhs",response)
+      console.log("groupid",response)
+      let p=document.createElement('p')
+        p.innerText=response.data.allGroups[i].groupname
+        groups_list.appendChild(p)
+ 
+    })
+    .catch((err)=>{
+      document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
+      console.log(err);
+    })
+}
 
 
-
-
-
-
-
-
-
-
-
-
-//   function editUserDetails(uid, name,email,phonenumber){
-//     document.getElementById('email').value = email;
-//     document.getElementById('name').value = name;
-//     document.getElementById('phonenumber').value=phonenumber;
-//     deleteUser(uid)
-//   }
-  
-//   function deleteUser(uid){
-//     axios.delete(`http://localhost:5000/admin/delete-user/${uid}`)
-//     .then((response)=>{  
-//       console.log(response);  
-//       removeUserFromScreen(uid)
-//     })
-//     .catch((err)=>{
-//         console.log(err);
-//     })
+window.addEventListener("DOMContentLoaded", () =>{
+  const token  = localStorage.getItem('token')
+  const decodeToken = parseJwt(token)
+  console.log("decode tokenjhhvhjshshbshb",decodeToken.userId)
+  const uid=decodeToken.userId;
+  axios.get("http://localhost:5000/group/getgroups", { headers: {"Authorization" : token} })
+  .then((response)=>{
+    console.log("all the group data",response);
     
-//   }
-  
-//   function removeUserFromScreen(uid){
-//     const parentNode = document.getElementById('listOfUsers');
-//     const childNodeToBeDeleted = document.getElementById(uid);
-//     if(childNodeToBeDeleted){
-//       parentNode.removeChild(childNodeToBeDeleted);
-//     }
+    for(var i=0;i<response.data.allGroups.length;i++){
     
-//   }
+      const parentNode=document.getElementById('groups-list');
+      const childHTML = `<p class="group-det">${response.data.allGroups[i].groupName} 
+      
+      <a href="#" onclick="openForm(); getgroupusr(${response.data.allGroups[i].groupId})"  class="button"><i class="fas fa-users" id="group-users"></i></a>
+      <a href="#"  class="button" onclick="opengroupchat(${response.data.allGroups[i].groupId})"><i class="fa fa-comment" aria-hidden="true" id="group-messages"></i></a>
+      <a href="#" onclick="exit() " id="exit"  class="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+      <a href="#"  class="button" id="exitgroup" onclick="deletegroup(${response.data.allGroups[i].groupId})"><i class="fa fa-minus" aria-hidden="true"></i></a></p>
+                        `
+      parentNode.innerHTML=parentNode.innerHTML+childHTML;
+    }
+  })
+  .catch((err)=>{
+    console.log(err);
+  })
+
+
+})
+
+
+
+
+
+function getgroupusr(groupId){
+  
+  user_group_list.innerHTML=""
+  const token  = localStorage.getItem('token')
+  const decodeToken = parseJwt(token)
+  console.log("decode tokenjhhvhjshshbshb grp",decodeToken.userId)
+  const uid=decodeToken.userId;
+  axios.get(`http://localhost:5000/group/getgroupusers/${groupId}`, { headers: {"Authorization" : token} })
+  .then((response)=>{
+    console.log("all the grp usr",response.data.allgrpusr);
+    
+    
+    for(var i=0;i<response.data.allgrpusr.length;i++){
+      if(uid==response.data.allgrpusr[i].userId && response.data.allgrpusr[i].is_admin==true){
+        const parentNode=document.getElementById('users-group-list');
+        const childHTML = 
+        `<p>${response.data.allgrpusr[i].userName} <a href="#"  class="button" onclick="openadduserform()"><i class="fa fa-plus" aria-hidden="true"></i></a>
+        <a href="#"  class="button" onclick="deleteuser(${response.data.allgrpusr[i].groupId},${response.data.allgrpusr[i].userId})"><i class="fa fa-minus" aria-hidden="true"></i></a>
+        </p>`
+        parentNode.innerHTML=parentNode.innerHTML+childHTML;
+      }
+      else if(uid==response.data.allgrpusr[i].userId){
+        const parentNode=document.getElementById('users-group-list');
+        const childHTML = 
+        `<p>${response.data.allgrpusr[i].userName}
+        <a href="#"  class="button" onclick="deleteuser(${response.data.allgrpusr[i].groupId},${response.data.allgrpusr[i].userId})"><i class="fa fa-minus" aria-hidden="true"></i></a>
+        </p>`
+        parentNode.innerHTML=parentNode.innerHTML+childHTML;
+      }
+      else{
+        const parentNode=document.getElementById('users-group-list');
+        const childHTML = 
+        `<p>${response.data.allgrpusr[i].userName}
+        <a href="#"  class="button" onclick="deleteuser(${response.data.allgrpusr[i].groupId},${response.data.allgrpusr[i].userId})"><i class="fa fa-minus" aria-hidden="true"></i></a></p>
+        </p>`
+        parentNode.innerHTML=parentNode.innerHTML+childHTML;
+      }
+      
+    }
+  })
+  .catch((err)=>{
+    console.log(err);
+  })
+}
+
+
+
+function addusrtogrp() {
+  var radios = document.getElementsByName("is_admin");
+    var selected = Array.from(radios).find(radio => radio.checked);
+    console.log("radio value",selected.value)
+
+    var is_admin=selected.value
+    var usrname=grp_usr_add_name.value
+    console.log("grp_usr_add_name",grp_usr_add_name.value)
+    console.log("grp_add_groupName",grp_add_groupName.value)
+    var groupName=grp_add_groupName.value
+    let obj={
+      usrname,
+      is_admin,
+      groupName
+    }
+    const token  = localStorage.getItem('token')
+    axios.post(`http://localhost:5000/group/addusertogroup`,obj,  { headers: {"Authorization" : token} })
+    .then((response)=>{
+      console.log("add user data",response)
+        
+    })
+    .catch((err)=>{
+      document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
+      console.log(err);
+    })
+}
+
+
+function deleteuser(groupId,userId){
+  console.log(groupId,userId);
+  const token  = localStorage.getItem('token')
+  axios.delete(`http://localhost:5000/group/deleteuser/${groupId}/${userId}`,  { headers: {"Authorization" : token} })
+    .then((response)=>{
+      if(response.status==201){
+        alert("user successfully deleted")
+      }
+      console.log(response.status)
+      if(response.status==200){
+          alert("you are not admin of this group")
+      }
+       console.log("delete response",response) 
+    })
+    .catch((err)=>{
+      document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
+      console.log(err);
+    })
+}
+
+function deletegroup(groupId){
+  console.log("delete group id",groupId)
+  const token  = localStorage.getItem('token')
+  axios.delete(`http://localhost:5000/group/deletegroup/${groupId}`,  { headers: {"Authorization" : token} })
+    .then((response)=>{
+      if(response.status==201){
+        alert("group successfully deleted")
+      }
+      console.log(response.status)
+      if(response.status==200){
+          alert("you are not owner of this group")
+      }
+       console.log("delete group response",response) 
+    })
+    .catch((err)=>{
+      document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
+      console.log(err);
+    })
+}
+
+function opengroupchat(groupid){
+  var message=messageInput.value
+  chats.innerHTML=""
+  showAlltheUsers()
+    let obj={
+        message
+    };
+    console.log(message);
+    console.log(obj);
+    console.log("get group id in group chat",groupid)
+    const token  = localStorage.getItem('token')
+    localStorage.setItem("groupid", groupid)
+    const decodeToken = parseJwt(token)
+    console.log("decode tokenjhhvhjshshbshb",decodeToken.userId)
+    const uid=decodeToken.userId;
+    axios.get(`http://localhost:5000/message/getgroupmessages/${groupid}`, { headers: {"Authorization" : token} })
+    .then((response)=>{
+      console.log("all the group message data",response.data.message);
+
+      
+      for(var i=0;i<response.data.message.length;i++){
+        if(uid==response.data.message[i].userId){
+          showNewMessageOnScreen(response.data.message[i],'outgoing');
+        }
+        else{
+          showNewMessageOnScreen(response.data.message[i],'incoming');
+        }
+        
+      }
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+}
+
+
+function exit() {
+  if(localStorage.getItem("groupid")!=0){
+  localStorage.setItem("groupid", 0)
+  getmessage()
+  }
+}

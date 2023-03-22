@@ -13,6 +13,14 @@ const Usergroup= sequelize.define("usergroup", {
     is_admin: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
+    },
+    userName:{
+      type: Sequelize.STRING,
+      allowNull:false,
+    },
+    groupName:{
+      type: Sequelize.STRING,
+      allowNull:false,
     }
   });
 

@@ -31,8 +31,8 @@ app.use('/message', msgRoutes);
 const userRoutes = require('./routes/user');
 app.use('/user', userRoutes);
 
-// const purchaseRoutes = require('./routes/purchase')
-// app.use('/purchase', purchaseRoutes)
+const groupRoutes = require('./routes/group')
+app.use('/group', groupRoutes)
 
 // const premiumFeatureRoutes = require('./routes/premiumFeature')
 // app.use('/premium', premiumFeatureRoutes)
