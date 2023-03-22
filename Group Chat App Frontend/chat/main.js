@@ -11,6 +11,10 @@ const grpname=document.querySelector('#groupname')
 const grp_add_groupName=document.querySelector('#groupName')
 const user_group_list=document.querySelector('#users-group-list')
 
+window.addEventListener('beforeunload', function (e) {
+  e.preventDefault();
+  localStorage.setItem("groupid", 0)
+});
 
 const parseJwt = (token) => {
   try {
@@ -20,27 +24,36 @@ const parseJwt = (token) => {
   }
 };
 
-async function sendmsz(e){
-    e.preventDefault();
-    var message=messageInput.value
+function sendmsz(e){
+  e.preventDefault();
+  var message=messageInput.value
 
-    let obj={
-        message
-    };
-    console.log(message);
-    console.log(obj);
-    const groupId = localStorage.getItem("groupid") ? localStorage.getItem("groupid") : 0;
-    console.log("send msg gid",groupId);
-    const token  = localStorage.getItem('token')
-    axios.post(`http://localhost:5000/message/sendmsg/${groupId}`,obj,  { headers: {"Authorization" : token} })
-    .then((response)=>{
-      console.log(response)
-      showNewMessageOnScreen(response.data.newUserDetail)  
-    })
-    .catch((err)=>{
-      document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
-      console.log(err);
-    })
+  let obj={
+      message
+  };
+  console.log(message);
+  const token  = localStorage.getItem('token')
+  const decodeToken = parseJwt(token)
+  const uid=decodeToken.userId;
+  console.log(obj);
+  const groupid = localStorage.getItem("groupid") ? localStorage.getItem("groupid") : 0;
+  console.log("send msg gid",groupid);
+  
+  console.log("send msg token ",token)
+  axios.post(`http://localhost:5000/message/sendmsg/${groupid}`,obj,  { headers: {"Authorization" : token} })
+  .then((response)=>{
+    console.log(response)
+    if(uid==response.data.newUserDetail.userId){
+      showNewMessageOnScreen(response.data.newUserDetail,'outgoing');
+    }
+    else{
+      showNewMessageOnScreen(response.data.newUserDetail,'incoming');
+    } 
+  })
+  .catch((err)=>{
+    document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
+    console.log(err);
+  })
 }
 
 var groupid = localStorage.getItem("groupid") ? localStorage.getItem("groupid") : 0;
@@ -334,4 +347,27 @@ function exit() {
   localStorage.setItem("groupid", 0)
   getmessage()
   }
+}
+
+function logout(){
+  localStorage.setItem("groupid", 0)
+}
+
+async function sendFile(e){
+  e.preventDefault()
+  const groupid=localStorage.getItem("groupid")
+  const file=document.getElementById('file').value
+  let obj={
+    file,
+    groupid
+}
+  // const fileData=file.files[0];
+  const token  = localStorage.getItem('token')
+  console.log(file)
+  // const formData=new FormData();
+  // formData.append('file',fileData);
+  // console.log(fileData);
+
+  const response=await axios.post(`http://localhost:5000/media/sendmedia/${groupid}`,obj,{ headers: {"Authorization" : token} })
+  console.log(response)
 }

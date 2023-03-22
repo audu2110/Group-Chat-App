@@ -15,14 +15,17 @@ const Message = require('../models/message');
 const User = require('../models/user');
 
 exports.sendMessage=async (req, res, next) => {
+  try{
     const groupId=req.params.groupId;
     const user = req.user;
     const uid = req.user.id;
     const message = req.body.message;
     const username = req.user.name;
     console.log("user name in send msg", username);
-    if(!groupId){
-      const data=await user.createMessage({ message: message, Username: username })
+    console.log("user message in send msg", message);
+    console.log("group id in send msg", groupId);
+    if(groupId==0){
+      const data= await user.createMessage({ message: message, Username: username })
         res.status(201).json({newUserDetail:data})
   
     }
@@ -30,6 +33,11 @@ exports.sendMessage=async (req, res, next) => {
       const data= await user.createMessage({ message: message, Username: username,groupId:groupId })
         res.status(201).json({newUserDetail:data})
     }
+  }catch (err) {
+    console.log("in post error",err)
+    res.status(401).json(err)
+}
+    
     
   }
 

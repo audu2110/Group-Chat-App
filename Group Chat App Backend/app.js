@@ -36,9 +36,12 @@ app.use('/group', groupRoutes)
 
 // const premiumFeatureRoutes = require('./routes/premiumFeature')
 // app.use('/premium', premiumFeatureRoutes)
-
 const passwordRoutes = require('./routes/password')
 app.use('/password', passwordRoutes)
+
+
+const mediaRoutes = require('./routes/media')
+app.use('/media', mediaRoutes)
 
 app.use((req, res, next) => {
     res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));

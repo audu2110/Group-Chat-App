@@ -59,7 +59,7 @@ div.container{
 }
 
 div.users-window{
-    height: 76vh;
+    height: 88vh;
     width: 350px;
     color: #ffffff;
     background-color: #3f3f3f;
@@ -371,4 +371,43 @@ div.user-input{
 
 #exit{
     color: #ffffff;
+}
+
+#logout{
+    background-color:#2791cf;
+    color: #ffffff;
+    width: 10em;  height: 3em;
+}
+
+
+
+div.user-file{
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+#file{
+    font-size: 16px;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    outline: none;
+    width: 100%;
+    border-radius: 50px 0px 0px 50px;
+}
+
+
+#buttonsendfile{
+    font-size: 16px;
+    font-weight: 600;
+    padding: 5px 15px;
+    border: none;
+    outline: none;
+    letter-spacing: 0.5px;
+    border-radius: 0 50px 50px 0;
+    color: #ffffff;
+    background-color: #2791cf;
 }

@@ -14,6 +14,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div align="right" style="margin: 10px;"> 
+        <a href="../Login/login.html">
+          <button type="submit" class="btn btn-primary" id="logout" onclick="logout()">Logout</button>
+        </a>
+        
+        <!-- <input type="button" value="Login" />  -->
+      </div>
     <main>
         <header>
             <div class="title">
@@ -66,6 +73,14 @@
                         <button  class="msg-btn"  id="user-send" type="submit">SEND</button>   
                     </div>
                 </form>
+                <form onsubmit="sendFile(event)" >
+                    <div style="padding-top: 10px;" class="user-file">
+                        <input type="file" id="file" name="file" class="form-control" placeholder="Send messages"
+                            aria-label="Send messages" aria-describedby="button-addon2" id="msz">
+                            
+                        <button class="btn btn-primary" type="submit" id="buttonsendfile">send media</button>
+                    </div>
+                </form>
             </div>
         </div>
     </main>
@@ -92,7 +107,7 @@
             <li class="users-group-list">vaib</li> -->
             <!-- <p class="users-group-list">od</p>
             <p class="users-group-list">vaib</p> -->
-            <div id="users-group-list" class="usrgrplist"></div>
+            <div id="users-group-list"></div>
         </div>
     </div>
     <div class="addusr">
