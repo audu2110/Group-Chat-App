@@ -151,11 +151,12 @@ div.user-join{
 div.incoming{
     color: #3f3f3f;
     background-color: #ffffff;
-    border-radius: 10px 50px 50px 10px;
+    border-radius: 10px 10px 10px 10px;
     padding: 5px 15px;
     max-width: 400px;
     margin-bottom: 15px;
     font-size: 16px;
+    word-wrap:break-word;
 }
 
 
@@ -168,12 +169,13 @@ div.outgoing{
     margin-left: auto;
     color: #ffffff;
     background-color: #2791cf;
-    border-radius: 50px 10px 10px 50px;
+    border-radius: 10px 10px 10px 10px;
     text-align: right;
     padding: 5px 15px;
     max-width: 400px;
     margin-bottom: 15px;
     font-size: 16px;
+    word-wrap:break-word;
 }
 
 div.user-input{
@@ -376,7 +378,8 @@ div.user-input{
 #logout{
     background-color:#2791cf;
     color: #ffffff;
-    width: 10em;  height: 3em;
+    width: 5em;  height: 3em;
+    border-radius: 15px;
 }
 
 

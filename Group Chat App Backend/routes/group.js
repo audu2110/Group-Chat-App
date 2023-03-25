@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 
-const { Op, where } = require("sequelize");
+
 const userAuth=require('../middleware/auth');
 const bodyParser = require('body-parser');
 router.use(bodyParser.json())

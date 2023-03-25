@@ -54,6 +54,7 @@ function sendmsz(e){
     document.body.innerHTML=document.body.innerHTML+"<h4>Something went wrong</h4>"
     console.log(err);
   })
+  messageInput.value=""
 }
 
 var groupid = localStorage.getItem("groupid") ? localStorage.getItem("groupid") : 0;
@@ -67,6 +68,7 @@ if (groupid <= 0) {
 
 
 async function getmessage(){
+  
     const token  = localStorage.getItem('token')
     const decodeToken = parseJwt(token)
     console.log("decode tokenjhhvhjshshbshb",decodeToken.userId)
@@ -107,7 +109,48 @@ async function getmessage(){
   
 
 
+//   async function getmsz() {
+//     try {
+//         const messageConainer=document.querySelector('.container')
+//         messageConainer.innerHTML=""
+//         let lastmsgId = JSON.parse(localStorage.getItem('lastmsgId')) ? JSON.parse(localStorage.getItem('lastmsgId')) : 0;
 
+//         const responseMsz = await axios.get(`http://localhost:5000/message/getmessages/${lastmsgId}`, { headers: { "authentication": token } })
+//         const respMsz = responseMsz.data.message  //chat response
+//         if(respMsz.length>0){
+//         lastmsgId += parseInt(respMsz[respMsz.length-1].id);
+//     }
+//     let resLength = respMsz.length
+//         let existingArray = JSON.parse(localStorage.getItem('messages')) || [];
+
+//         if (existingArray.length >= 10) {
+//             while (resLength > 0) {
+//                 existingArray.shift()
+//                 resLength--
+//             }
+//         }
+
+//         let responseArray = respMsz;
+
+//         let mergedArray = existingArray.concat(responseArray);
+
+//         localStorage.setItem('lastmsgId', JSON.stringify(lastmsgId));
+
+//         localStorage.setItem('messages', JSON.stringify(mergedArray));
+
+//         const loginId = parseJwt(token).id
+
+        
+//         for (let i = 0; i < mergedArray.length; i++) {
+//             showOnChatBox(mergedArray[i].username, mergedArray[i].message, loginId, mergedArray[i].userId)
+
+//         }
+//         
+
+//     } catch (err) {
+//         console.log(err)
+//     }
+// }
 
 
 

@@ -25,9 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const msgRoutes = require('./routes/message');
 app.use('/message', msgRoutes);
-// app.use(helmet());
-// app.use(compression());
-// app.use(morgan('combined'));
+
 const userRoutes = require('./routes/user');
 app.use('/user', userRoutes);
 
